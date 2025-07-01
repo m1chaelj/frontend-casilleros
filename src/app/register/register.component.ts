@@ -36,7 +36,7 @@ export class RegisterComponent {
       const res = await this.http.post<any>('http://localhost:3001/usuarios', {
         correo: this.credenciales.correo,
         contrasena: this.credenciales.contrasena,
-        rol: 'alumno' // Forzar el rol a 'alumno' en la petición
+        rol: this.credenciales.rol // Permitir rol dinámico
       }).toPromise();
       this.success = true;
       if (isPlatformBrowser(this.platformId)) {
