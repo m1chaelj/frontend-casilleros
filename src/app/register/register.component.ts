@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-register',
@@ -33,7 +34,7 @@ export class RegisterComponent {
     this.error = '';
     this.success = false;
     try {
-      const res = await this.http.post<any>('https://backend-casilleros.onrender.com/usuarios', {
+      const res = await this.http.post<any>(`${environment.apiUrl}/usuarios`, {
         correo: this.credenciales.correo,
         contrasena: this.credenciales.contrasena,
         rol: this.credenciales.rol // Permitir rol dinámico

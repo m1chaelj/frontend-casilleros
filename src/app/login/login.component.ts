@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -35,7 +36,7 @@ export class LoginComponent {
     this.error = '';
 
     try {
-      const loginRes: any = await this.http.post('https://backend-casilleros.onrender.com/usuarios/login', this.credenciales).toPromise();
+      const loginRes: any = await this.http.post(`${environment.apiUrl}/usuarios/login`, this.credenciales).toPromise();
 
       if (isPlatformBrowser(this.platformId)) {
         sessionStorage.setItem('token', loginRes.token);

@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-subir-documentos',
@@ -48,14 +49,14 @@ export class SubirDocumentosComponent {
       formHorario.append('archivo', this.horario);
       formHorario.append('id_solicitud', this.idSolicitud.toString());
       formHorario.append('tipo', 'comprobante horario');
-      await this.http.post('https://backend-casilleros.onrender.com/documentos', formHorario).toPromise();
+      await this.http.post(`${environment.apiUrl}/documentos`, formHorario).toPromise();
 
       // Subir credencial
       const formCredencial = new FormData();
       formCredencial.append('archivo', this.credencial);
       formCredencial.append('id_solicitud', this.idSolicitud.toString());
       formCredencial.append('tipo', 'credencial vigente');
-      await this.http.post('https://backend-casilleros.onrender.com/documentos', formCredencial).toPromise();
+      await this.http.post(`${environment.apiUrl}/documentos`, formCredencial).toPromise();
 
       this.success = true;
       this.documentosActualizados.emit();

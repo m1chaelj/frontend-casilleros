@@ -6,6 +6,7 @@ import { AuthService } from '../services/auth.service';
 import { isPlatformBrowser } from '@angular/common';
 import { DocumentoService } from '../services/documento.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-panel-coordinador',
@@ -107,7 +108,7 @@ export class PanelCoordinadorComponent implements OnInit {
 
   cargarPagos(idSolicitud: number): void {
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${this.token}` });
-    this.http.get<any[]>(`https://backend-casilleros.onrender.com/pagos/solicitud/${idSolicitud}`, { headers }).subscribe({
+    this.http.get<any[]>(`${environment.apiUrl}/pagos/solicitud/${idSolicitud}`, { headers }).subscribe({
       next: (pagos) => {
         this.pagos[idSolicitud] = pagos;
         // Buscar el pago aprobado y cargar casillero asignado
@@ -127,7 +128,7 @@ export class PanelCoordinadorComponent implements OnInit {
 
   cargarTodosCasilleros(): void {
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${this.token}` });
-    this.http.get<any[]>(`https://backend-casilleros.onrender.com/casilleros`, { headers }).subscribe({
+    this.http.get<any[]>(`${environment.apiUrl}/casilleros`, { headers }).subscribe({
       next: (casilleros) => {
         this.todosCasilleros = casilleros;
       }
@@ -150,7 +151,7 @@ export class PanelCoordinadorComponent implements OnInit {
   }
 
   cargarCasillerosDisponibles(): void {
-    this.http.get<any[]>(`https://backend-casilleros.onrender.com/casilleros/disponibles`).subscribe({
+    this.http.get<any[]>(`${environment.apiUrl}/casilleros/disponibles`).subscribe({
       next: (casilleros) => {
         this.casilleros = casilleros;
       }
@@ -163,7 +164,7 @@ export class PanelCoordinadorComponent implements OnInit {
       return;
     }
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${this.token}` });
-    this.http.get<any[]>(`https://backend-casilleros.onrender.com/asignaciones/pago/${idPago}`, { headers }).subscribe({
+    this.http.get<any[]>(`${environment.apiUrl}/asignaciones/pago/${idPago}`, { headers }).subscribe({
       next: (asignaciones) => {
         if (asignaciones && asignaciones.length > 0) {
           const asign = asignaciones[0];
@@ -183,7 +184,7 @@ export class PanelCoordinadorComponent implements OnInit {
 
   cargarTodasAsignaciones(): void {
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${this.token}` });
-    this.http.get<any[]>(`https://backend-casilleros.onrender.com:3001/asignaciones`, { headers }).subscribe({
+    this.http.get<any[]>(`${environment.apiUrl}/asignaciones`, { headers }).subscribe({
       next: (asignaciones) => {
         // Mapear por id_solicitud
         asignaciones.forEach((asign: any) => {
@@ -254,7 +255,7 @@ export class PanelCoordinadorComponent implements OnInit {
 
   aprobarPago(pago: any): void {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${this.token}` });
-    this.http.put(`https://backend-casilleros.onrender.com/pagos/${pago.id_pago}/validar`, { validado: true, estado_pago: 'pagado' }, { headers }).subscribe({
+    this.http.put(`${environment.apiUrl}/pagos/${pago.id_pago}/validar`, { validado: true, estado_pago: 'pagado' }, { headers }).subscribe({
       next: () => {
         this.cargarPagos(this.solicitudSeleccionada.id_solicitud);
       },
@@ -272,7 +273,7 @@ export class PanelCoordinadorComponent implements OnInit {
   confirmarRechazoPago(): void {
     if (!this.rechazoPagoId) return;
     const headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${this.token}` });
-    this.http.put(`https://backend-casilleros.onrender.com/pagos/${this.rechazoPagoId}/validar`, { validado: false, estado_pago: 'no pagado', motivo_rechazo: this.motivoRechazoPago }, { headers }).subscribe({
+    this.http.put(`${environment.apiUrl}/pagos/${this.rechazoPagoId}/validar`, { validado: false, estado_pago: 'no pagado', motivo_rechazo: this.motivoRechazoPago }, { headers }).subscribe({
       next: () => {
         this.cargarPagos(this.solicitudSeleccionada.id_solicitud);
         this.rechazoPagoId = null;
@@ -303,7 +304,7 @@ export class PanelCoordinadorComponent implements OnInit {
       return;
     }
     const headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${this.token}` });
-    this.http.post('https://backend-casilleros.onrender.com/asignaciones', { id_pago: pagoAprobado.id_pago, id_casillero: this.casilleroASeleccionar[idSolicitud] }, { headers }).subscribe({
+    this.http.post(`${environment.apiUrl}/asignaciones`, { id_pago: pagoAprobado.id_pago, id_casillero: this.casilleroASeleccionar[idSolicitud] }, { headers }).subscribe({
       next: (asignacion: any) => {
         this.casillerosAsignados[idSolicitud] = {
           numero: asignacion.numero,
@@ -324,7 +325,7 @@ export class PanelCoordinadorComponent implements OnInit {
     if (!this.nuevoNumero || !this.nuevaUbicacion) return;
     this.creando = true;
     const headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${this.token}` });
-    this.http.post('https://backend-casilleros.onrender.com/casilleros', { numero: this.nuevoNumero, ubicacion: this.nuevaUbicacion }, { headers }).subscribe({
+    this.http.post(`${environment.apiUrl}/casilleros`, { numero: this.nuevoNumero, ubicacion: this.nuevaUbicacion }, { headers }).subscribe({
       next: () => {
         this.nuevoNumero = '';
         this.nuevaUbicacion = '';
@@ -343,7 +344,7 @@ export class PanelCoordinadorComponent implements OnInit {
     if (!c.disponible) return;
     if (!confirm('¿Seguro que deseas eliminar este casillero?')) return;
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${this.token}` });
-    this.http.delete(`https://backend-casilleros.onrender.com/casilleros/${c.id_casillero}`, { headers }).subscribe({
+    this.http.delete(`${environment.apiUrl}/casilleros/${c.id_casillero}`, { headers }).subscribe({
       next: () => {
         this.cargarTodosCasilleros();
         this.cargarCasillerosDisponibles();
@@ -356,7 +357,7 @@ export class PanelCoordinadorComponent implements OnInit {
 
   marcarComoPagado(pago: any): void {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${this.token}` });
-    this.http.put(`https://backend-casilleros.onrender.com/pagos/${pago.id_pago}/validar`, { validado: true, estado_pago: 'pagado', motivo_rechazo: null }, { headers }).subscribe({
+    this.http.put(`${environment.apiUrl}/pagos/${pago.id_pago}/validar`, { validado: true, estado_pago: 'pagado', motivo_rechazo: null }, { headers }).subscribe({
       next: () => {
         this.cargarPagos(pago.id_solicitud);
       },

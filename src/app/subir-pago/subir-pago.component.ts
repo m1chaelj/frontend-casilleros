@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { environment } from '../environments/environment';
 
 
 @Component({
@@ -53,7 +54,7 @@ export class SubirPagoComponent {
         Authorization: `Bearer ${this.token}`
       });
 
-      const response = await this.http.post('https://backend-casilleros.onrender.com/pagos', formData, { headers }).toPromise();
+      const response = await this.http.post(`${environment.apiUrl}/pagos`, formData, { headers }).toPromise();
 
       if (!response) throw new Error('Error al subir comprobante de pago.');
 
