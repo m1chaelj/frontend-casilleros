@@ -82,6 +82,7 @@
       <ng-container *ngIf="!pago?.comprobante_url && mostrarSubirPago && pago?.estado_pago !== 'rechazado'; else pagoEstado">
         <app-subir-pago
           [idSolicitud]="solicitud?.id_solicitud"
+          [token]="token"
           (pagoSubido)="onPagoSubido($event)"
         ></app-subir-pago>
       </ng-container>
