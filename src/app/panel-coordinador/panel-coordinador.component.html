@@ -55,20 +55,17 @@
             <ng-container *ngIf="pagos[solicitud.id_solicitud]?.length; else sinPago">
               <div *ngFor="let pago of pagos[solicitud.id_solicitud]" style="margin-bottom: 1em; border-bottom: 1px solid #444; padding-bottom: 0.5em;">
                 <div>
-                  Estado: <b>{{ pago.estado_pago }}</b> | Validado: {{ pago.validado_por_coordinador ? 'Sí' : 'No' }}
+                  Estado: <b [ngClass]="{'text-success': pago.estado_pago === 'pagado', 'text-warning': pago.estado_pago === 'no pagado'}">{{ pago.estado_pago === 'pagado' ? 'Pagado' : 'No pagado' }}</b>
+                  | Validado: {{ pago.validado_por_coordinador ? 'Sí' : 'No' }}
                   <span *ngIf="pago.comprobante_url">
                     | <a [href]="pago.comprobante_url" target="_blank" style="color:#60a5fa;">Comprobante</a>
                   </span>
                 </div>
                 <div class="d-flex gap-2 align-items-center mt-2">
-                  <button *ngIf="pago.estado_pago === 'no pagado'" class="btn btn-success btn-sm" (click)="marcarComoPagado(pago)">
-                    <i class="bi bi-cash-coin"></i> Marcar como pagado
-                  </button>
-                  <button *ngIf="pago.estado_pago !== 'no pagado' && !pago.validado_por_coordinador" class="btn btn-success btn-sm" (click)="aprobarPago(pago)">Aprobar</button>
-                  <button *ngIf="pago.estado_pago !== 'no pagado' && !pago.validado_por_coordinador" class="btn btn-danger btn-sm" (click)="rechazarPago(pago)">Rechazar</button>
-                  <button *ngIf="pago.validado_por_coordinador && pago.estado_pago === 'pagado'" class="btn btn-warning btn-sm" (click)="rechazarPago(pago)">Cambiar a No pagado</button>
+                  <button *ngIf="pago.estado_pago === 'no pagado' && !pago.validado_por_coordinador" class="btn btn-success btn-sm" (click)="aprobarPago(pago)">Aceptar</button>
+                  <button *ngIf="pago.estado_pago === 'no pagado' && !pago.validado_por_coordinador" class="btn btn-danger btn-sm" (click)="rechazarPago(pago)">Rechazar</button>
                 </div>
-                <div *ngIf="pago.motivo_rechazo" class="text-danger mt-1">Motivo: {{ pago.motivo_rechazo }}</div>
+                <div *ngIf="pago.motivo_rechazo" class="text-danger mt-1">Motivo de rechazo: {{ pago.motivo_rechazo }}</div>
                 <div *ngIf="rechazoPagoId === pago.id_pago" class="mt-2">
                   <textarea [(ngModel)]="motivoRechazoPago" class="form-control mb-2" rows="2" placeholder="Escribe el motivo de rechazo"></textarea>
                   <div class="d-flex gap-2 mt-1">

@@ -92,7 +92,7 @@
         </div>
         <div *ngIf="pago?.estado_pago === 'rechazado'" class="text-error mt-3">
           <strong>Pago rechazado.</strong>
-          <div *ngIf="pago?.motivo_rechazo">Motivo: {{ pago.motivo_rechazo }}</div>
+          <div *ngIf="pago?.motivo_rechazo">Motivo de rechazo: {{ pago.motivo_rechazo }}</div>
         </div>
         <div *ngIf="pago?.estado_pago === 'pagado'" class="text-success mt-3">
           <strong>Pago validado correctamente.</strong>
