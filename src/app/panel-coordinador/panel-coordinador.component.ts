@@ -307,13 +307,14 @@ export class PanelCoordinadorComponent implements OnInit {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${this.token}` });
     this.http.post(`${environment.apiUrl}/asignaciones`, { id_pago: pagoAprobado.id_pago, id_casillero: this.casilleroASeleccionar[idSolicitud] }, { headers }).subscribe({
       next: (asignacion: any) => {
+        // Refrescar casilleros asignados ANTES de permitir mostrar el formulario de nuevo
+        this.cargarTodasAsignaciones();
         this.casillerosAsignados[idSolicitud] = {
           numero: asignacion.numero,
           ubicacion: asignacion.ubicacion
         };
         // Refrescar casilleros disponibles y todas las asignaciones
         this.cargarCasillerosDisponibles();
-        this.cargarTodasAsignaciones();
         // Refrescar pagos y solicitudes para actualizar la UI
         this.cargarPagos(idSolicitud);
         this.cargarSolicitudes();
