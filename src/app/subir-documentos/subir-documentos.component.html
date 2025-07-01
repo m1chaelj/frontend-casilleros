@@ -1,0 +1,36 @@
+<div class="form-bg">
+  <form (ngSubmit)="onSubmit()" class="card-form">
+    <h3 class="form-title">Subir Documentos</h3>
+
+    <div *ngIf="success" class="form-success">
+      ¡Documentos subidos correctamente!
+    </div>
+    <div *ngIf="error" class="form-error">
+      {{ error }}
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Comprobante de horario vigente (PDF)</label>
+      <input
+        type="file"
+        accept="application/pdf"
+        (change)="onFileChange($event, 'horario')"
+        class="form-input"
+      />
+    </div>
+
+    <div class="form-group mb-2">
+      <label class="form-label">Credencial escolar vigente (PDF)</label>
+      <input
+        type="file"
+        accept="application/pdf"
+        (change)="onFileChange($event, 'credencial')"
+        class="form-input"
+      />
+    </div>
+
+    <button type="submit" class="btn btn-blue w-full" [disabled]="loading">
+      {{ loading ? 'Subiendo...' : 'Subir documentos' }}
+    </button>
+  </form>
+</div>

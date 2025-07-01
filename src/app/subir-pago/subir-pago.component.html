@@ -1,0 +1,36 @@
+<div class="login-container relative min-h-screen">
+  <div class="background absolute inset-0 bg-blue-600 opacity-30 z-0"></div>
+
+  <div class="login-glass relative z-10 max-w-md mx-auto mt-20 bg-white bg-opacity-90 p-8 rounded-lg shadow-lg">
+    <form (ngSubmit)="onSubmit()">
+      <h2 class="text-center text-xl font-bold mb-4 text-gray-800">Subir Comprobante de Pago</h2>
+
+      <div *ngIf="success" class="text-green-700 bg-green-100 border border-green-300 px-4 py-2 rounded mb-4">
+        ¡Comprobante subido correctamente!
+      </div>
+
+      <div *ngIf="error" class="text-red-700 bg-red-100 border border-red-300 px-4 py-2 rounded mb-4">
+        {{ error }}
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Comprobante (PDF)</label>
+        <input
+          type="file"
+          accept="image/jpeg,image/png,application/pdf"
+          (change)="onFileChange($event)"
+          class="block w-full border border-gray-300 px-3 py-2 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-500 text-sm"
+          required
+        />
+      </div>
+
+      <button
+        type="submit"
+        [disabled]="loading"
+        class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md transition disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {{ loading ? 'Enviando...' : 'Subir Comprobante' }}
+      </button>
+    </form>
+  </div>
+</div>

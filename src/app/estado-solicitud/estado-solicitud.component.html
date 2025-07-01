@@ -1,0 +1,132 @@
+<div class="container">
+  <!-- Timeline visual siempre visible -->
+  <div class="timeline-container">
+    <app-timeline-alumno
+      [pasoActual]="pasoActual"
+      [estadoProceso]="{ solicitud: solicitud, documentos: documentos, pago: solicitud?.comprobante_pago, casillero: casilleroAsignado }"
+      [solicitud]="solicitud"
+      [documentos]="documentos"
+      [casilleroAsignado]="casilleroAsignado"
+      [pdfUrl]="pdfUrl"
+      (pasoSeleccionado)="mostrarPaso($event)"
+    ></app-timeline-alumno>
+  </div>
+
+  <div *ngIf="loading" class="loading">Cargando...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <!-- Paso: Solicitud -->
+  <div *ngIf="pasoActual === 'solicitud'">
+    <ng-container *ngIf="!solicitud; else datosSolicitud">
+      <app-solicitud-form
+        [disabled]="!puedeCrearNuevaSolicitud"
+        (solicitudCreada)="onSolicitudCreada($event)"
+      ></app-solicitud-form>
+    </ng-container>
+    <ng-template #datosSolicitud>
+      <table class="table table-striped mt-3">
+        <!-- Aquí puedes mostrar los datos de la solicitud -->
+        <tr><td><strong>ID Solicitud:</strong></td><td>{{ solicitud.id_solicitud }}</td></tr>
+        <tr><td><strong>Boleta:</strong></td><td>{{ solicitud.numero_boleta }}</td></tr>
+        <tr><td><strong>Nombre:</strong></td><td>{{ solicitud.nombre_completo }}</td></tr>
+        <tr><td><strong>Correo:</strong></td><td>{{ solicitud.correo_personal }}</td></tr>
+        <tr><td><strong>Celular:</strong></td><td>{{ solicitud.numero_celular }}</td></tr>
+        <tr><td><strong>Semestre:</strong></td><td>{{ solicitud.semestre_actual }}</td></tr>
+        <tr><td><strong>Estado:</strong></td><td>{{ solicitud.estado }}</td></tr>
+      </table>
+      <div *ngIf="solicitud.estado === 'rechazada'" class="text-error mt-3">
+        <strong>Tu solicitud fue rechazada.</strong>
+        <div *ngIf="solicitud.motivo_rechazo">Motivo: {{ solicitud.motivo_rechazo }}</div>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Paso: Documentos -->
+  <div *ngIf="pasoActual === 'documentos'">
+    <ng-container *ngIf="solicitud?.estado === 'rechazada'; else documentosNormales">
+      <div class="text-error mt-3">
+        <strong>No puedes subir documentos porque tu solicitud fue rechazada.</strong>
+        <div *ngIf="solicitud.motivo_rechazo">Motivo: {{ solicitud.motivo_rechazo }}</div>
+      </div>
+    </ng-container>
+    <ng-template #documentosNormales>
+      <ng-container *ngIf="documentos.length < 2 && mostrarSubirDocs; else documentosCompletos">
+        <app-subir-documentos
+          [idSolicitud]="solicitud?.id_solicitud"
+          (documentosActualizados)="onDocumentosActualizados($event)"
+        ></app-subir-documentos>
+      </ng-container>
+      <ng-template #documentosCompletos>
+        <div class="text-success mt-3">Documentos completos.</div>
+      </ng-template>
+      <div *ngIf="documentos && documentos.length">
+        <h4>Documentos subidos:</h4>
+        <ul>
+          <li *ngFor="let doc of documentos">
+            <a [href]="doc.url" target="_blank">{{ doc.nombre }}</a>
+          </li>
+        </ul>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Paso: Pago -->
+  <div *ngIf="pasoActual === 'pago'">
+    <ng-container *ngIf="solicitud?.estado === 'rechazada'; else pagoNormal">
+      <div class="text-error mt-3">
+        <strong>No puedes subir pago porque tu solicitud fue rechazada.</strong>
+        <div *ngIf="solicitud.motivo_rechazo">Motivo: {{ solicitud.motivo_rechazo }}</div>
+      </div>
+    </ng-container>
+    <ng-template #pagoNormal>
+      <ng-container *ngIf="!pago?.comprobante_url && mostrarSubirPago && pago?.estado_pago !== 'rechazado'; else pagoEstado">
+        <app-subir-pago
+          [idSolicitud]="solicitud?.id_solicitud"
+          (pagoSubido)="onPagoSubido($event)"
+        ></app-subir-pago>
+      </ng-container>
+      <ng-template #pagoEstado>
+        <div *ngIf="pago?.estado_pago === 'no pagado'" class="text-warning mt-3">
+          <strong>Pago pendiente de validación.</strong>
+        </div>
+        <div *ngIf="pago?.estado_pago === 'rechazado'" class="text-error mt-3">
+          <strong>Pago rechazado.</strong>
+          <div *ngIf="pago?.motivo_rechazo">Motivo: {{ pago.motivo_rechazo }}</div>
+        </div>
+        <div *ngIf="pago?.estado_pago === 'pagado'" class="text-success mt-3">
+          <strong>Pago validado correctamente.</strong>
+        </div>
+      </ng-template>
+      <div *ngIf="pago?.comprobante_url">
+        <h4>Comprobante de pago:</h4>
+        <a [href]="pago.comprobante_url" target="_blank">Ver comprobante</a>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Paso: Casillero -->
+  <div *ngIf="pasoActual === 'casillero'">
+    <ng-container *ngIf="solicitud?.estado === 'rechazada'; else casilleroNormal">
+      <div class="text-error mt-3">
+        <strong>Tu solicitud fue rechazada.</strong>
+        <div *ngIf="solicitud.motivo_rechazo">Motivo: {{ solicitud.motivo_rechazo }}</div>
+      </div>
+    </ng-container>
+    <ng-template #casilleroNormal>
+      <ng-container *ngIf="casilleroAsignado; else sinCasillero">
+        <div class="card mt-3">
+          <h3>Casillero asignado</h3>
+          <p><strong>Número:</strong> {{ casilleroAsignado.numero }}</p>
+          <p><strong>Ubicación:</strong> {{ casilleroAsignado.ubicacion }}</p>
+          <a *ngIf="pdfUrl" [href]="pdfUrl" target="_blank">Descargar PDF de asignación</a>
+        </div>
+      </ng-container>
+      <ng-template #sinCasillero>
+        <div class="text-warning mt-3">
+          <p>No tienes casillero asignado aún.</p>
+          <button class="btn btn-blue" (click)="refrescarEstado()">Refrescar</button>
+        </div>
+      </ng-template>
+    </ng-template>
+  </div>
+</div>

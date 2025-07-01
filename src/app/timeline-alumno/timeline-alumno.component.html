@@ -1,0 +1,14 @@
+<div class="timeline-container">
+  <button
+    *ngFor="let paso of pasos"
+    class="timeline-btn"
+    [ngClass]="{
+      'active': pasoActual === paso.key,
+      'enabled': pasoActual !== paso.key,
+      'disabled': false
+    }"
+    (click)="seleccionarPaso(paso.key)"
+  >
+    {{ paso.label }}
+  </button>
+</div>

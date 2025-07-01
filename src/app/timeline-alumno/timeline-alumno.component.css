@@ -1,0 +1,39 @@
+.timeline-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 2rem;
+  border-radius: 16px;
+  color: #fff;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+}
+
+.timeline-item {
+  position: relative;
+  padding: 1rem 0 1rem 2rem;
+  border-left: 2px solid #60a5fa;
+  margin-bottom: 1.5rem;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 1rem;
+  width: 16px;
+  height: 16px;
+  background-color: #60a5fa;
+  border-radius: 50%;
+}
+
+.timeline-item h4 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+}
+
+.timeline-item p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #d1d5db;
+}

@@ -1,0 +1,170 @@
+<div class="container mt-4">
+  <h2>Panel de Coordinador</h2>
+
+  <div *ngIf="loading" class="alert alert-info">
+    Cargando solicitudes...
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Filtrar por estado:</label>
+    <select [(ngModel)]="filtroEstado" class="form-select">
+      <option value="todos">Todos</option>
+      <option value="pendiente">Pendientes</option>
+      <option value="aprobada">Aprobadas</option>
+      <option value="rechazada">Rechazadas</option>
+    </select>
+  </div>
+
+  <div *ngIf="!loading && solicitudesFiltradas.length > 0">
+    <table class="table table-striped" style="background: rgba(0,0,0,0.7); color: #fff;">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Boleta</th>
+          <th>Nombre</th>
+          <th>Correo</th>
+          <th>Celular</th>
+          <th>Semestre</th>
+          <th>Documentos</th>
+          <th>Pago</th>
+          <th>Casillero</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let solicitud of solicitudesFiltradas">
+          <td>{{ solicitud.id_solicitud }}</td>
+          <td>{{ solicitud.numero_boleta }}</td>
+          <td>{{ solicitud.nombre_completo }}</td>
+          <td>{{ solicitud.correo_personal }}</td>
+          <td>{{ solicitud.numero_celular }}</td>
+          <td>{{ solicitud.semestre_actual }}</td>
+          <td>
+            <ul *ngIf="documentos[solicitud.id_solicitud]?.length; else sinDocs" style="padding-left: 1em;">
+              <li *ngFor="let doc of documentos[solicitud.id_solicitud]">
+                {{ doc.tipo }}: <a [href]="doc.ruta_archivo" target="_blank" style="color:#60a5fa;">Ver</a>
+              </li>
+            </ul>
+            <ng-template #sinDocs><span class="text-warning">Sin documentos</span></ng-template>
+          </td>
+          <td>
+            <ng-container *ngIf="pagos[solicitud.id_solicitud]?.length; else sinPago">
+              <div *ngFor="let pago of pagos[solicitud.id_solicitud]" style="margin-bottom: 1em; border-bottom: 1px solid #444; padding-bottom: 0.5em;">
+                <div>
+                  Estado: <b>{{ pago.estado_pago }}</b> | Validado: {{ pago.validado_por_coordinador ? 'Sí' : 'No' }}
+                  <span *ngIf="pago.comprobante_url">
+                    | <a [href]="pago.comprobante_url" target="_blank" style="color:#60a5fa;">Comprobante</a>
+                  </span>
+                </div>
+                <div class="d-flex gap-2 align-items-center mt-2">
+                  <button *ngIf="pago.estado_pago === 'no pagado'" class="btn btn-success btn-sm" (click)="marcarComoPagado(pago)">
+                    <i class="bi bi-cash-coin"></i> Marcar como pagado
+                  </button>
+                  <button *ngIf="pago.estado_pago !== 'no pagado' && !pago.validado_por_coordinador" class="btn btn-success btn-sm" (click)="aprobarPago(pago)">Aprobar</button>
+                  <button *ngIf="pago.estado_pago !== 'no pagado' && !pago.validado_por_coordinador" class="btn btn-danger btn-sm" (click)="rechazarPago(pago)">Rechazar</button>
+                  <button *ngIf="pago.validado_por_coordinador && pago.estado_pago === 'pagado'" class="btn btn-warning btn-sm" (click)="rechazarPago(pago)">Cambiar a No pagado</button>
+                </div>
+                <div *ngIf="pago.motivo_rechazo" class="text-danger mt-1">Motivo: {{ pago.motivo_rechazo }}</div>
+                <div *ngIf="rechazoPagoId === pago.id_pago" class="mt-2">
+                  <textarea [(ngModel)]="motivoRechazoPago" class="form-control mb-2" rows="2" placeholder="Escribe el motivo de rechazo"></textarea>
+                  <div class="d-flex gap-2 mt-1">
+                    <button class="btn btn-danger btn-sm" (click)="confirmarRechazoPago()" [disabled]="!motivoRechazoPago.trim()">Confirmar</button>
+                    <button class="btn btn-secondary btn-sm" (click)="cancelarRechazoPago()">Cancelar</button>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+            <ng-template #sinPago><span class="text-warning">Sin pago</span></ng-template>
+          </td>
+          <td>
+            <ng-container *ngIf="loadingAsignaciones">
+              <span class="text-info">Cargando...</span>
+            </ng-container>
+            <ng-container *ngIf="!loadingAsignaciones">
+              <ng-container *ngIf="casillerosAsignados[solicitud.id_solicitud]">
+                <b>#{{ casillerosAsignados[solicitud.id_solicitud].numero }}</b> - {{ casillerosAsignados[solicitud.id_solicitud].ubicacion }}
+              </ng-container>
+              <ng-container *ngIf="!casillerosAsignados[solicitud.id_solicitud]">
+                <div *ngIf="tienePagoAprobado(solicitud.id_solicitud) && todosCasilleros.length">
+                  <!-- Solo mostrar el formulario si NO hay casillero asignado para esta solicitud -->
+                  <form (ngSubmit)="asignarCasillero(solicitud.id_solicitud)" class="d-flex flex-column flex-md-row align-items-center gap-2">
+                    <select [(ngModel)]="casilleroASeleccionar[solicitud.id_solicitud]" name="casilleroASeleccionar_{{solicitud.id_solicitud}}" class="form-select mb-2" required>
+                      <option *ngFor="let c of todosCasilleros" [value]="c.id_casillero" [disabled]="!c.disponible">#{{ c.numero }} - {{ c.ubicacion }}</option>
+                    </select>
+                    <button type="submit" class="btn btn-blue btn-sm" [disabled]="asignando[solicitud.id_solicitud] || !casilleroASeleccionar[solicitud.id_solicitud]">
+                      {{ asignando[solicitud.id_solicitud] ? 'Asignando...' : 'Asignar' }}
+                    </button>
+                  </form>
+                </div>
+                <div *ngIf="!tienePagoAprobado(solicitud.id_solicitud)">
+                  <span class="text-warning">Pago no aprobado</span>
+                </div>
+              </ng-container>
+            </ng-container>
+          </td>
+          <td>
+            <select [(ngModel)]="estados[solicitud.id_solicitud]" class="form-select form-select-sm">
+              <option value="pendiente">Pendiente</option>
+              <option value="aprobada">Aprobada</option>
+              <option value="rechazada">Rechazada</option>
+            </select>
+            <div *ngIf="estados[solicitud.id_solicitud] === 'rechazada'" class="mt-2">
+              <textarea [(ngModel)]="motivos[solicitud.id_solicitud]" class="form-control" placeholder="Motivo de rechazo"></textarea>
+            </div>
+            <button (click)="actualizarEstado(solicitud)" class="btn btn-sm btn-primary mt-2">
+              Actualizar
+            </button>
+            <button (click)="eliminarSolicitud(solicitud.id_solicitud)" class="btn btn-sm btn-danger mt-2 ms-2">
+              Eliminar
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="!loading && solicitudesFiltradas.length === 0" class="alert alert-warning" style="background:rgba(0,0,0,0.7);color:#fff;">
+    No hay solicitudes para mostrar
+  </div>
+
+  <div class="mt-5">
+    <h2>Gestión de Casilleros</h2>
+    <form (ngSubmit)="crearCasillero()" class="row g-3 align-items-end mb-3">
+      <div class="col-auto">
+        <label class="form-label">Número</label>
+        <input type="number" [(ngModel)]="nuevoNumero" name="nuevoNumero" class="form-control" required />
+      </div>
+      <div class="col-auto">
+        <label class="form-label">Ubicación</label>
+        <input type="text" [(ngModel)]="nuevaUbicacion" name="nuevaUbicacion" class="form-control" required />
+      </div>
+      <div class="col-auto">
+        <button type="submit" class="btn btn-blue" [disabled]="creando">{{ creando ? 'Creando...' : 'Agregar casillero' }}</button>
+      </div>
+    </form>
+    <table class="table table-striped" style="background: rgba(0,0,0,0.7); color: #fff;">
+      <thead>
+        <tr>
+          <th>Número</th>
+          <th>Ubicación</th>
+          <th>Disponible</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of todosCasilleros">
+          <td>{{ c.numero }}</td>
+          <td>{{ c.ubicacion }}</td>
+          <td>{{ c.disponible ? 'Sí' : 'No' }}</td>
+          <td>
+            <button class="btn btn-sm btn-danger" [disabled]="!c.disponible" (click)="eliminarCasillero(c)">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

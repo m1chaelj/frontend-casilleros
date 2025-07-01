@@ -1,0 +1,46 @@
+<div class="login-bg">
+  <div class="login-glass">
+    <h2 class="text-center mb-3">Registro</h2>
+    <form (ngSubmit)="handleSubmit()">
+      <div *ngIf="error" class="text-error mb-2">{{ error }}</div>
+      <div class="form-group mb-2">
+        <label class="form-label">Correo</label>
+        <input
+          type="email"
+          [(ngModel)]="credenciales.correo"
+          name="correo"
+          class="form-input"
+          required
+        />
+      </div>
+      <div class="form-group mb-2">
+        <label class="form-label">Contraseña</label>
+        <input
+          type="password"
+          [(ngModel)]="credenciales.contrasena"
+          name="contrasena"
+          class="form-input"
+          required
+        />
+      </div>
+      <div class="form-group mb-3">
+        <label class="form-label">Rol</label>
+        <input type="text" class="form-input" value="Alumno" disabled />
+      </div>
+      <button
+        type="submit"
+        class="btn btn-blue w-full mb-2"
+        [disabled]="loading"
+      >
+        {{ loading ? 'Registrando...' : 'Registrarse' }}
+      </button>
+      <button
+        type="button"
+        class="btn btn-secondary w-full"
+        (click)="navigateToLogin()"
+      >
+        Volver a login
+      </button>
+    </form>
+  </div>
+</div>

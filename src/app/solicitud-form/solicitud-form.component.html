@@ -1,0 +1,30 @@
+<form (submit)="onSubmit($event)" class="card-form">
+  <h2 class="form-title">Solicitud de Casillero</h2>
+  <div *ngIf="error" class="form-error">{{ error }}</div>
+  <div class="form-group">
+    <label class="form-label">Número de boleta</label>
+    <input name="numero_boleta" [(ngModel)]="solicitud.numero_boleta" required class="form-input" />
+  </div>
+  <div class="form-group">
+    <label class="form-label">Nombre completo</label>
+    <input name="nombre_completo" [(ngModel)]="solicitud.nombre_completo" required class="form-input" />
+  </div>
+  <div class="form-group">
+    <label class="form-label">Semestre actual</label>
+    <input name="semestre_actual" [(ngModel)]="solicitud.semestre_actual" required class="form-input" />
+  </div>
+  <div class="form-group">
+    <label class="form-label">Correo personal</label>
+    <input name="correo_personal" type="email" [(ngModel)]="solicitud.correo_personal" required class="form-input" />
+  </div>
+  <div class="form-group">
+    <label class="form-label">Número de celular</label>
+    <input name="numero_celular" [(ngModel)]="solicitud.numero_celular" required class="form-input" />
+  </div>
+  <button type="submit" class="btn btn-blue w-full" [disabled]="loading">
+    {{ loading ? 'Enviando...' : 'Enviar solicitud' }}
+  </button>
+  <div *ngIf="success" class="form-success mt-2">
+    ¡Solicitud enviada correctamente!
+  </div>
+</form>

@@ -1,0 +1,25 @@
+.main-wrapper {
+  min-height: 100vh;
+  padding: 2rem;
+  background: #1f2937;
+  color: #fff;
+}
+
+.main-header {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.section {
+  background: rgba(255,255,255,0.08);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.section-title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}

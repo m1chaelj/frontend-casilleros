@@ -1,0 +1,33 @@
+.upload-section {
+  background: rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 500px;
+  margin: 2rem auto;
+  color: #fff;
+  backdrop-filter: blur(12px);
+}
+
+.input {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 6px;
+  padding: 0.5rem;
+  color: white;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.btn {
+  background: #10b981;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn:hover {
+  background: #059669;
+}
