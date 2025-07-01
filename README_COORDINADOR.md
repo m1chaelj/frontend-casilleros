@@ -20,7 +20,7 @@ Copia el hash generado (el hash real puede variar cada vez que lo generes).
 
 ## 2. Insertar el usuario coordinador en la base de datos
 
-Ejemplo para el usuario coordinador:
+Ejemplo para el usuario coordinador necesario:
 
 ```sql
 INSERT INTO usuario (correo, contrasena, rol)
