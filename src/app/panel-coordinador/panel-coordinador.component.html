@@ -82,13 +82,13 @@
               <span class="text-info">Cargando...</span>
             </ng-container>
             <ng-container *ngIf="!loadingAsignaciones">
-              <ng-container *ngIf="casillerosAsignados[solicitud.id_solicitud]">
+              <ng-container *ngIf="casillerosAsignados[solicitud.id_solicitud]?.id_casillero">
                 <b>#{{ casillerosAsignados[solicitud.id_solicitud].numero }}</b> - {{ casillerosAsignados[solicitud.id_solicitud].ubicacion }}
                 <div class="alert alert-info mt-2">
                   Este estudiante ya tiene un casillero asignado. No se puede asignar otro.
                 </div>
               </ng-container>
-              <ng-container *ngIf="!casillerosAsignados[solicitud.id_solicitud] && tienePagoAprobado(solicitud.id_solicitud) && todosCasilleros.length">
+              <ng-container *ngIf="!casillerosAsignados[solicitud.id_solicitud]?.id_casillero && tienePagoAprobado(solicitud.id_solicitud) && todosCasilleros.length">
                 <!-- Solo mostrar el formulario si NO hay casillero asignado para esta solicitud y hay pago aprobado -->
                 <form (ngSubmit)="asignarCasillero(solicitud.id_solicitud)" class="d-flex flex-column flex-md-row align-items-center gap-2">
                   <select [(ngModel)]="casilleroASeleccionar[solicitud.id_solicitud]" name="casilleroASeleccionar_{{solicitud.id_solicitud}}" class="form-select mb-2" required>
@@ -99,7 +99,7 @@
                   </button>
                 </form>
               </ng-container>
-              <div *ngIf="!casillerosAsignados[solicitud.id_solicitud] && !tienePagoAprobado(solicitud.id_solicitud)">
+              <div *ngIf="!casillerosAsignados[solicitud.id_solicitud]?.id_casillero && !tienePagoAprobado(solicitud.id_solicitud)">
                 <span class="text-warning">Pago no aprobado</span>
               </div>
             </ng-container>

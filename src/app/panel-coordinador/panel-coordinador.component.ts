@@ -170,6 +170,7 @@ export class PanelCoordinadorComponent implements OnInit {
         if (asignaciones && asignaciones.length > 0) {
           const asign = asignaciones[0];
           this.casillerosAsignados[idSolicitud] = {
+            id_casillero: asign.id_casillero,
             numero: asign.numero,
             ubicacion: asign.ubicacion
           };
@@ -191,6 +192,7 @@ export class PanelCoordinadorComponent implements OnInit {
         asignaciones.forEach((asign: any) => {
           if (asign.id_solicitud) {
             this.casillerosAsignados[asign.id_solicitud] = {
+              id_casillero: asign.id_casillero,
               numero: asign.numero,
               ubicacion: asign.ubicacion
             };
