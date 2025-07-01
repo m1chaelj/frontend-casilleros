@@ -50,20 +50,31 @@ export class SubirPagoComponent {
       formData.append('comprobante', this.comprobante);
       formData.append('id_solicitud', this.idSolicitud.toString());
 
-      const headers = new HttpHeaders({
-        Authorization: `Bearer ${this.token}`
-      });
+      const headers = this.token ? new HttpHeaders({ Authorization: `Bearer ${this.token}` }) : new HttpHeaders();
 
-      const response = await this.http.post(`${environment.apiUrl}/pagos`, formData, { headers }).toPromise();
+      const response = await this.http.post<any>(
+        `${environment.apiUrl}/pagos`,
+        formData,
+        { headers, observe: 'response' }
+      ).toPromise();
 
-      if (!response) throw new Error('Error al subir comprobante de pago.');
-
-      this.success = true;
-      this.pagoSubido.emit();
+      if (response && response.status === 201) {
+        this.success = true;
+        this.pagoSubido.emit();
+      } else {
+        throw new Error('Error inesperado al subir comprobante de pago.');
+      }
     } catch (err: any) {
-      this.error = err?.message || 'Error al subir comprobante de pago';
+      if (err.status === 403) {
+        this.error = 'No tienes permiso para subir el comprobante. Verifica que tu solicitud esté aprobada y seas el dueño.';
+      } else if (err.status === 401) {
+        this.error = 'Sesión expirada o token inválido. Vuelve a iniciar sesión.';
+      } else if (err.status === 400) {
+        this.error = err.error?.error || 'Datos inválidos.';
+      } else {
+        this.error = err?.message || 'Error al subir comprobante de pago';
+      }
     }
-
     this.loading = false;
   }
 }
