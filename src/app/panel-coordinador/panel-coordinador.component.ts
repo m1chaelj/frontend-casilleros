@@ -108,7 +108,8 @@ export class PanelCoordinadorComponent implements OnInit {
 
   cargarPagos(idSolicitud: number): void {
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${this.token}` });
-    this.http.get<any[]>(`${environment.apiUrl}/pagos/solicitud/${idSolicitud}`, { headers }).subscribe({
+    // Usar endpoint que devuelve TODOS los pagos
+    this.http.get<any[]>(`${environment.apiUrl}/pagos/solicitud/${idSolicitud}/todos`, { headers }).subscribe({
       next: (pagos) => {
         this.pagos[idSolicitud] = pagos;
         // Buscar el pago aprobado y cargar casillero asignado
