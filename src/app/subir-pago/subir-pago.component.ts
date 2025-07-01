@@ -55,7 +55,7 @@ export class SubirPagoComponent {
 
       const response = await this.http.post('http://localhost:3001/pagos', formData, { headers }).toPromise();
 
-      if (!response) throw new Error('Error al subir comprobante de pago');
+      if (!response) throw new Error('Error al subir comprobante de pago.');
 
       this.success = true;
       this.pagoSubido.emit();
