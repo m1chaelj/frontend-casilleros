@@ -1,4 +1,4 @@
-<div style="position: absolute; top: 1rem; right: 2rem; z-index: 1000;">
+<div *ngIf="isLoggedIn()" style="position: absolute; top: 1rem; right: 2rem; z-index: 1000;">
   <button class="btn btn-red" (click)="logout()">Cerrar sesión</button>
 </div>
 <router-outlet></router-outlet>
