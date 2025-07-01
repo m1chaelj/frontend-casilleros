@@ -39,6 +39,7 @@ export class SubirPagoComponent {
     try {
       if (!this.comprobante) throw new Error('Selecciona un archivo');
       if (!this.idSolicitud) throw new Error('No se encontró id_solicitud');
+      if (!this.token) throw new Error('Sesión expirada o token no encontrado. Vuelve a iniciar sesión.');
 
       // Validar tipo de archivo: solo PDF
       const allowedTypes = ['application/pdf'];
@@ -50,7 +51,7 @@ export class SubirPagoComponent {
       formData.append('comprobante', this.comprobante);
       formData.append('id_solicitud', this.idSolicitud.toString());
 
-      const headers = this.token ? new HttpHeaders({ Authorization: `Bearer ${this.token}` }) : new HttpHeaders();
+      const headers = new HttpHeaders({ Authorization: `Bearer ${this.token}` });
 
       const response = await this.http.post<any>(
         `${environment.apiUrl}/pagos`,
