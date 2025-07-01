@@ -59,14 +59,6 @@
       <ng-template #documentosCompletos>
         <div class="text-success mt-3">Documentos completos.</div>
       </ng-template>
-      <div *ngIf="documentos && documentos.length">
-        <h4>Documentos subidos:</h4>
-        <ul>
-          <li *ngFor="let doc of documentos">
-            <a [href]="doc.url" target="_blank">{{ doc.nombre }}</a>
-          </li>
-        </ul>
-      </div>
     </ng-template>
   </div>
 
