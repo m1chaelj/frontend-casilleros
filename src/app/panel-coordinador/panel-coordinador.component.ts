@@ -311,8 +311,12 @@ export class PanelCoordinadorComponent implements OnInit {
           numero: asignacion.numero,
           ubicacion: asignacion.ubicacion
         };
+        // Refrescar casilleros disponibles y todas las asignaciones
         this.cargarCasillerosDisponibles();
         this.cargarTodasAsignaciones();
+        // Refrescar pagos y solicitudes para actualizar la UI
+        this.cargarPagos(idSolicitud);
+        this.cargarSolicitudes();
         this.asignando[idSolicitud] = false;
       },
       error: (err) => {

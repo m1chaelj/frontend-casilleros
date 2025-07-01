@@ -69,8 +69,11 @@ export class EstadoSolicitudComponent {
   get puedeSubirPago(): boolean {
     // Solo permitir subir pago si:
     // - Hay solicitud aprobada
-    // - Y NO hay pago registrado con comprobante_url
-    return !!this.solicitud && this.solicitud.estado === 'aprobada' && !this.pago?.comprobante_url;
+    // - NO hay pago validado como pagado
+    if (!this.solicitud || this.solicitud.estado !== 'aprobada') return false;
+    if (!this.pago) return true;
+    // Si el pago ya está validado como pagado, no permitir subir más
+    return !(this.pago.estado_pago === 'pagado' && this.pago.validado_por_coordinador);
   }
 
   // Nuevo: helper para saber si puede ver casillero
@@ -164,7 +167,6 @@ export class EstadoSolicitudComponent {
     if (usuario && usuario.id_usuario) {
       this.solicitudService.obtenerSolicitudesUsuario(usuario.id_usuario).subscribe({
         next: (solicitudes: any[]) => {
-          // Tomar la solicitud más reciente (la primera si está ordenado por fecha)
           if (solicitudes && solicitudes.length > 0) {
             this.solicitud = solicitudes[0];
             // Si la solicitud fue rechazada, mostrar solo el estado y motivo
@@ -236,11 +238,9 @@ export class EstadoSolicitudComponent {
               }
             });
             this.pagoService.obtenerPagoPorSolicitud(this.solicitud.id_solicitud).subscribe({
-              next: (pagos: any[]) => {
-                // Tomar el pago más reciente (mayor id_pago)
-                this.pago = pagos && pagos.length > 0
-                  ? pagos.sort((a, b) => b.id_pago - a.id_pago)[0]
-                  : null;
+              next: (pago: any) => {
+                // El backend ahora devuelve un solo objeto (el más reciente)
+                this.pago = pago || null;
               },
               error: () => { this.pago = null; }
             });
