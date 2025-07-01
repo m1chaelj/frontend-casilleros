@@ -85,6 +85,9 @@
         <div *ngIf="pago?.estado_pago === 'rechazado'" class="text-error mt-3">
           <strong>Pago rechazado.</strong>
           <div *ngIf="pago?.motivo_rechazo">Motivo de rechazo: {{ pago.motivo_rechazo }}</div>
+          <div class="alert alert-warning mt-2">
+            Puedes volver a subir un comprobante de pago si tu anterior pago fue rechazado.
+          </div>
         </div>
         <div *ngIf="pago?.estado_pago === 'pagado'" class="text-success mt-3">
           <strong>Pago validado correctamente.</strong>

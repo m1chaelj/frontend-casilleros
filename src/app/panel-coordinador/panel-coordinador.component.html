@@ -84,6 +84,9 @@
             <ng-container *ngIf="!loadingAsignaciones">
               <ng-container *ngIf="casillerosAsignados[solicitud.id_solicitud]">
                 <b>#{{ casillerosAsignados[solicitud.id_solicitud].numero }}</b> - {{ casillerosAsignados[solicitud.id_solicitud].ubicacion }}
+                <div class="alert alert-info mt-2">
+                  Este estudiante ya tiene un casillero asignado. No se puede asignar otro.
+                </div>
               </ng-container>
               <ng-container *ngIf="!casillerosAsignados[solicitud.id_solicitud]">
                 <div *ngIf="tienePagoAprobado(solicitud.id_solicitud) && todosCasilleros.length">
