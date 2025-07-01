@@ -237,7 +237,10 @@ export class EstadoSolicitudComponent {
             });
             this.pagoService.obtenerPagoPorSolicitud(this.solicitud.id_solicitud).subscribe({
               next: (pagos: any[]) => {
-                this.pago = pagos && pagos.length > 0 ? pagos[0] : null;
+                // Tomar el pago más reciente (mayor id_pago)
+                this.pago = pagos && pagos.length > 0
+                  ? pagos.sort((a, b) => b.id_pago - a.id_pago)[0]
+                  : null;
               },
               error: () => { this.pago = null; }
             });
