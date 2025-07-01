@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://backend-casilleros.onrender.com' // Cambia según tu backend
+  apiUrl: 'http://localhost:3001' // Cambia según tu backend
 };
