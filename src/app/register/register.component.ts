@@ -33,7 +33,7 @@ export class RegisterComponent {
     this.error = '';
     this.success = false;
     try {
-      const res = await this.http.post<any>('http://localhost:3001/usuarios', {
+      const res = await this.http.post<any>('https://backend-casilleros.onrender.com/usuarios', {
         correo: this.credenciales.correo,
         contrasena: this.credenciales.contrasena,
         rol: this.credenciales.rol // Permitir rol dinámico

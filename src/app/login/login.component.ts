@@ -35,7 +35,7 @@ export class LoginComponent {
     this.error = '';
 
     try {
-      const loginRes: any = await this.http.post('http://localhost:3001/usuarios/login', this.credenciales).toPromise();
+      const loginRes: any = await this.http.post('https://backend-casilleros.onrender.com/usuarios/login', this.credenciales).toPromise();
 
       if (isPlatformBrowser(this.platformId)) {
         sessionStorage.setItem('token', loginRes.token);

@@ -48,14 +48,14 @@ export class SubirDocumentosComponent {
       formHorario.append('archivo', this.horario);
       formHorario.append('id_solicitud', this.idSolicitud.toString());
       formHorario.append('tipo', 'comprobante horario');
-      await this.http.post('http://localhost:3001/documentos', formHorario).toPromise();
+      await this.http.post('https://backend-casilleros.onrender.com/documentos', formHorario).toPromise();
 
       // Subir credencial
       const formCredencial = new FormData();
       formCredencial.append('archivo', this.credencial);
       formCredencial.append('id_solicitud', this.idSolicitud.toString());
       formCredencial.append('tipo', 'credencial vigente');
-      await this.http.post('http://localhost:3001/documentos', formCredencial).toPromise();
+      await this.http.post('https://backend-casilleros.onrender.com/documentos', formCredencial).toPromise();
 
       this.success = true;
       this.documentosActualizados.emit();
