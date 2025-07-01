@@ -299,11 +299,21 @@ export class EstadoSolicitudComponent {
     // Refresca el estado tras subir pago y fuerza mostrar el comprobante
     this.refrescarEstado();
     this.mostrarSubirPago = false;
-    // Si la solicitud ya tiene comprobante, forzar el paso a pago para mostrar el comprobante
+    // Mostrar mensaje de éxito visual
+    this.error = null;
     setTimeout(() => {
       if (this.solicitud?.comprobante_pago) {
         this.pasoActual = 'pago';
       }
     }, 500);
+  }
+
+  // Nuevo: método para mostrar mensaje de éxito tras validación/rechazo
+  mostrarMensajePago(msg: string) {
+    this.error = null;
+    setTimeout(() => {
+      this.error = msg;
+      setTimeout(() => { this.error = null; }, 2500);
+    }, 100);
   }
 }
